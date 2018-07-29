@@ -3,13 +3,14 @@ package worker
 import (
 	"encoding/xml"
 	"fmt"
-	"gocrawler/conf"
-	"gocrawler/sitemap"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/danielnaveda/gocrawler/conf"
+	"github.com/danielnaveda/gocrawler/sitemap"
 )
 
 func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {

@@ -1,14 +1,16 @@
 package main
 
 import (
-	"gocrawler/conf"
-	"gocrawler/files"
-	"gocrawler/worker"
 	"sync"
+
+	"github.com/danielnaveda/gocrawler/conf"
+	"github.com/danielnaveda/gocrawler/files"
+	"github.com/danielnaveda/gocrawler/worker"
 )
 
 func main() {
 	var c conf.Conf
+
 	c.GetConf()
 
 	files.CreateDirIfNotExist("temp-files")
