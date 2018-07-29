@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/danielnaveda/gocrawler.svg?branch=add-tests)](https://travis-ci.com/danielnaveda/gocrawler)
+
 # Gocrawler
 
 Simple crawler based on the sitemap of a URL
