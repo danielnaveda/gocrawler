@@ -4,7 +4,18 @@
 
 Simple crawler based on the sitemap of a URL
 
-## Installation
-- Create conf.yaml (conf.dist.yaml can be used as a reference)
-- Build project
-- Execute the binary
+## Quick Installation
+Go to your GOPATH and execute:
+```bash
+
+# Download project
+go get github.com/danielnaveda/gocrawler
+
+# Create your configuration file
+cp src/github.com/danielnaveda/gocrawler/conf.yaml .
+
+# ...<modify the file according to your needs>...
+
+# Run the program
+go run src/github.com/danielnaveda/gocrawler/main.go
+```
