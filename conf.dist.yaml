@@ -1,0 +1,10 @@
+api: ""
+# api: https://my.api.here
+
+domains:
+  - https://one.domain.here
+  - https://this.is.another.domain
+
+workers_per_domain: 3
+
+max_pages_crawled_per_domain: -1
