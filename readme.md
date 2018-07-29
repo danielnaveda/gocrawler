@@ -12,9 +12,9 @@ Go to your GOPATH and execute:
 go get github.com/danielnaveda/gocrawler
 
 # Create your configuration file
-cp src/github.com/danielnaveda/gocrawler/conf.yaml .
+cp src/github.com/danielnaveda/gocrawler/conf.dist.yaml ./conf.yaml
 
-# ...<modify the file according to your needs>...
+# ...<modify ./conf.yaml according to your needs>...
 
 # Run the program
 go run src/github.com/danielnaveda/gocrawler/main.go
