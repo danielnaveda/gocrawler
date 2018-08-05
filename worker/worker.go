@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -25,7 +24,6 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 
 	var mysitemap sitemap.Urlset
 	xml.Unmarshal(body, &mysitemap)
-	// fmt.Println(mysitemap)
 
 	urls := make(chan string, 20000)
 	results := make(chan bool, 20000)
@@ -53,30 +51,32 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 }
 
 func urlFetchWorker(c *conf.Conf, id int, jobs <-chan string, results chan<- bool) {
-	for j := range jobs {
-		fmt.Println("worker", id, "started  job", j)
+	for url := range jobs {
+		fmt.Println("worker", id, "started  job", url)
 
 		if c.API != "" {
-			j = strings.Replace(j, "https://", "", -1)
-			j = strings.Replace(j, "http://", "", -1)
+			url = strings.Replace(url, "https://", "", -1)
+			url = strings.Replace(url, "http://", "", -1)
 		}
 
-		resp2, err2 := http.Get(c.API + j)
-		if err2 != nil {
-			fmt.Println("Error with url " + j)
+		resp, err := http.Get(c.API + url)
+		if err != nil {
+			fmt.Println("Error with url " + url)
 			results <- true
 			return
 		}
 
-		body2, _ := ioutil.ReadAll(resp2.Body)
+		body, _ := ioutil.ReadAll(resp.Body)
 
-		d1 := []byte("testing\n")
-		d1 = body2
-		j = strings.Replace(j, "/", "|", -1)
-		err := ioutil.WriteFile("./temp-files/worker_"+strconv.Itoa(id)+"_"+string(j), d1, 0644)
-		fmt.Println(err)
+		if c.SaveIntoFiles == true {
+			saveIntoFile(url, body)
+		}
 
-		fmt.Println("worker", id, "finished job", j)
 		results <- true
 	}
+}
+
+func saveIntoFile(filename string, content []byte) error {
+	filename = strings.Replace(filename, "/", "..", -1)
+	return ioutil.WriteFile("./temp-files/"+filename, content, 0644)
 }

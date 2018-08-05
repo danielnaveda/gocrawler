@@ -8,3 +8,6 @@ domains:
 workers_per_domain: 3
 
 max_pages_crawled_per_domain: -1
+
+save_into_files: true
+
