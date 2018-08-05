@@ -35,7 +35,6 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 	counter := 0
 
 	for index := range mysitemap.URL {
-		fmt.Println(mysitemap.URL[index].Loc)
 		urls <- mysitemap.URL[index].Loc
 		counter++
 		if index == (c.MaxPagesCrawledPerDomain - 1) {
@@ -52,7 +51,7 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 
 func urlFetchWorker(c *conf.Conf, id int, jobs <-chan string, results chan<- bool) {
 	for url := range jobs {
-		fmt.Println("worker", id, "started  job", url)
+		fmt.Println("Fetching", url)
 
 		if c.API != "" {
 			url = strings.Replace(url, "https://", "", -1)
