@@ -11,10 +11,11 @@ Go to your GOPATH and execute:
 # Download project
 go get github.com/danielnaveda/gocrawler
 
-# Create your configuration file
-cp src/github.com/danielnaveda/gocrawler/conf.dist.yaml ./conf.yaml
+# Create your configuration folder and file
+mkdir -p conf
+cp src/github.com/danielnaveda/gocrawler/conf.dist.yaml ./conf/craw.yaml
 
-# ...<modify ./conf.yaml according to your needs>...
+# ...<modify ./craw.yaml according to your needs>...
 
 # Run the program
 go run src/github.com/danielnaveda/gocrawler/main.go
