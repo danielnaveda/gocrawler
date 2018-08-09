@@ -19,7 +19,7 @@ type Conf struct {
 // GetConf reads the conf.yaml file
 func (c *Conf) GetConf() *Conf {
 
-	yamlFile, err := ioutil.ReadFile("conf.yaml")
+	yamlFile, err := ioutil.ReadFile("conf/craw.yaml")
 
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
