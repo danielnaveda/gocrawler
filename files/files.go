@@ -1,11 +1,16 @@
 package files
 
-import (
-	"os"
-)
+import "os"
+
+type OsInterface interface {
+	RemoveAll(string)
+	Stat(string) (os.FileInfo, error)
+	IsNotExist(error) bool
+	MkdirAll(string, os.FileMode) error
+}
 
 // CreateDirIfNotExist creates a directory
-func CreateDirIfNotExist(dir string) {
+func CreateDirIfNotExist(dir string, os OsInterface) {
 	os.RemoveAll(dir)
 
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
