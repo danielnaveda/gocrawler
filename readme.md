@@ -6,36 +6,12 @@ Simple crawler based on the sitemap of a URL
 
 ## Run it with Docker
 
-### Without saving files in your machine
+### Quick run
 ```bash
-docker pull danielnaveda/gocrawler
-
-docker run -it --rm --name my-running-go-app -v <full path of your custom conf file>:/go/conf/craw.yaml danielnaveda/gocrawler
-
+docker run danielnaveda/gocrawler -domain "https://www.a-domain-with-a-standard-sitemap.com"
 ```
 
-### Saving files in your machine
+### Keep the crawled files in your machine
 ```bash
-docker pull danielnaveda/gocrawler
-
-docker run -it --rm --name my-running-go-app -v <full path of your custom conf file>:/go/conf/craw.yaml -v <full path of the folder where you want to save your files>:/go/temp-files danielnaveda/gocrawler
-
-```
-
-
-## Quick Installation
-Go to your GOPATH and execute:
-```bash
-
-# Download project
-go get github.com/danielnaveda/gocrawler
-
-# Create your configuration folder and file
-mkdir -p conf
-cp src/github.com/danielnaveda/gocrawler/conf.dist.yaml ./conf/craw.yaml
-
-# ...<modify ./craw.yaml according to your needs>...
-
-# Run the program
-go run src/github.com/danielnaveda/gocrawler/main.go
+docker run -v <your local full path>:/go/temp-files danielnaveda/gocrawler -domain "https://www.a-domain-with-a-standard-sitemap.com"
 ```
