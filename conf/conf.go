@@ -1,12 +1,5 @@
 package conf
 
-import (
-	"io/ioutil"
-	"log"
-
-	yaml "gopkg.in/yaml.v2"
-)
-
 // Conf is the configuration structure
 type Conf struct {
 	Domains                  []string `yaml:"domains"`
@@ -16,19 +9,15 @@ type Conf struct {
 	SaveIntoFiles            bool     `yaml:"save_into_files"`
 }
 
-// GetConf reads the conf.yaml file
-func (c *Conf) GetConf() *Conf {
-
-	yamlFile, err := ioutil.ReadFile("conf/craw.yaml")
+// GetConf reads the configuration file
+func (c *Conf) GetConf(fileName string, reader func(string) ([]byte, error), unmarshaller func([]byte, interface{}) error) (*Conf, error) {
+	yamlFile, err := reader(fileName)
 
 	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		return nil, err
 	}
 
-	err = yaml.Unmarshal(yamlFile, c)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
-	}
+	err = unmarshaller(yamlFile, c)
 
-	return c
+	return c, err
 }
