@@ -12,6 +12,8 @@ import (
 	"github.com/danielnaveda/gocrawler/sitemap"
 )
 
+// CrawlDomain reads the sitemap.xml of a site and fetches all its
+// urls
 func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	resp, err := http.Get(domain)

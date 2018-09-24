@@ -5,13 +5,12 @@ import (
 )
 
 // CreateDirIfNotExist creates a directory
-func CreateDirIfNotExist(dir string) {
-	os.RemoveAll(dir)
+func CreateDirIfNotExist(folderName string, createFolder func(string, os.FileMode) error, removeFolder func(string) error) error {
+	err := removeFolder(folderName)
 
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err = os.MkdirAll(dir, 0755)
-		if err != nil {
-			panic(err)
-		}
+	if err != nil {
+		return err
 	}
+
+	return createFolder(folderName, 0755)
 }

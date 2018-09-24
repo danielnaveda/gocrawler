@@ -4,19 +4,14 @@
 
 Simple crawler based on the sitemap of a URL
 
-## Quick Installation
-Go to your GOPATH and execute:
+## Run it with Docker
+
+### Quick run
 ```bash
+docker run danielnaveda/gocrawler -domain "https://www.a-domain-with-a-standard-sitemap.com"
+```
 
-# Download project
-go get github.com/danielnaveda/gocrawler
-
-# Create your configuration folder and file
-mkdir -p conf
-cp src/github.com/danielnaveda/gocrawler/conf.dist.yaml ./conf/craw.yaml
-
-# ...<modify ./craw.yaml according to your needs>...
-
-# Run the program
-go run src/github.com/danielnaveda/gocrawler/main.go
+### Keep the crawled files in your machine
+```bash
+docker run -v <your local full path>:/go/temp-files danielnaveda/gocrawler -domain "https://www.a-domain-with-a-standard-sitemap.com"
 ```
