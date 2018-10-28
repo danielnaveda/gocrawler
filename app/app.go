@@ -9,6 +9,11 @@ import (
 	"github.com/danielnaveda/gocrawler/worker"
 )
 
+const (
+	folderName  = `temp-files`
+	sitemapPath = `sitemap.xml`
+)
+
 // Run starts the gocrawler application
 func Run() {
 	c, err := conf.GetConf()
@@ -17,13 +22,13 @@ func Run() {
 		panic(err.Error())
 	}
 
-	files.CreateDirIfNotExist(`temp-files`, os.MkdirAll, os.RemoveAll)
+	files.CreateDirIfNotExist(folderName, os.MkdirAll, os.RemoveAll)
 
 	var wg sync.WaitGroup
 
 	for index := range c.Domains {
 		wg.Add(1)
-		go worker.CrawlDomain(&c, c.Domains[index]+"/sitemap.xml", &wg)
+		go worker.CrawlDomain(&c, c.Domains[index]+"/"+sitemapPath, &wg)
 	}
 
 	wg.Wait()

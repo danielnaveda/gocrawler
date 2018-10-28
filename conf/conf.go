@@ -27,6 +27,7 @@ type Conf struct {
 	SaveIntoFiles            bool     `yaml:"save_into_files"`
 	BasicUser                string
 	BasicPass                string
+	ConfigFilePath           string
 }
 
 // getConfFile reads the configuration file
@@ -44,33 +45,55 @@ func (c *Conf) getConfFile(fileName string, reader func(string) ([]byte, error),
 
 // GetConf returns a configuration struct based on the user's requirements
 func GetConf() (Conf, error) {
+	var c = Conf{}
+	getConfFromDefault(&c)
+	getConfFromCLI(&c)
+	getConfFromFile(&c)
+
+	return c, nil
+}
+
+func getConfFromDefault(c *Conf) {
+	c.API = ``
+	c.WorkersPerDomain = 10
+	c.MaxPagesCrawledPerDomain = -1
+	c.SaveIntoFiles = false
+	c.BasicUser = ``
+	c.BasicPass = ``
+	c.ConfigFilePath = ``
+}
+
+func getConfFromFile(c *Conf) {
+	if c.ConfigFilePath != `` {
+		c.getConfFile(c.ConfigFilePath, ioutil.ReadFile, yaml.Unmarshal)
+	}
+}
+
+func getConfFromCLI(c *Conf) {
 	var myDomainsFromParam domainsFromParam
 
-	confFilePath := flag.String("conf", "", "path of the configuration file")
+	confFilePath := flag.String("conf", c.ConfigFilePath, "path of the configuration file")
 
-	apiURL := flag.String("api", "", "api url")
+	apiURL := flag.String("api", c.API, "api url")
 	flag.Var(&myDomainsFromParam, "domain", "domain to crawl")
-	workersPerDomain := flag.Int("nworkers", 100, "number of worker per domains")
-	crawlersPerDomain := flag.Int("ncrawlers", -1, "number of crawlers per domains")
-	saveFiles := flag.Bool("savefile", true, "type false if you do not want to save the files in a folder")
+	workersPerDomain := flag.Int("nworkers", c.WorkersPerDomain, "number of worker per domains")
+	crawlersPerDomain := flag.Int("ncrawlers", c.MaxPagesCrawledPerDomain, "number of crawlers per domains")
+	saveFiles := flag.Bool("savefile", c.SaveIntoFiles, "type false if you do not want to save the files in a folder")
 
-	basicUser := flag.String("basicuser", "", "basic authentication username")
-	basicPass := flag.String("basicpass", "", "basic authentication password")
+	basicUser := flag.String("basicuser", c.BasicUser, "basic authentication username")
+	basicPass := flag.String("basicpass", c.BasicPass, "basic authentication password")
 
 	flag.Parse()
 
 	var mydomains []string
 
-	var c = Conf{
-		API:                      *apiURL,
-		WorkersPerDomain:         *workersPerDomain,
-		MaxPagesCrawledPerDomain: *crawlersPerDomain,
-		SaveIntoFiles:            *saveFiles,
-		BasicUser:                *basicUser,
-		BasicPass:                *basicPass,
-	}
-
-	c.getConfFile(*confFilePath, ioutil.ReadFile, yaml.Unmarshal)
+	c.API = *apiURL
+	c.WorkersPerDomain = *workersPerDomain
+	c.MaxPagesCrawledPerDomain = *crawlersPerDomain
+	c.SaveIntoFiles = *saveFiles
+	c.BasicUser = *basicUser
+	c.BasicPass = *basicPass
+	c.ConfigFilePath = *confFilePath
 
 	mydomains = make([]string, len(myDomainsFromParam))
 
@@ -78,6 +101,4 @@ func GetConf() (Conf, error) {
 		mydomains[index] = myDomainsFromParam[index]
 	}
 	c.Domains = mydomains
-
-	return c, nil
 }
