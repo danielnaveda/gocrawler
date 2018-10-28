@@ -12,11 +12,17 @@ import (
 	"github.com/danielnaveda/gocrawler/sitemap"
 )
 
-// CrawlDomain reads the sitemap.xml of a site and fetches all its
-// urls
+// CrawlDomain reads the sitemap.xml of a site and fetches all its urls
 func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	resp, err := http.Get(domain)
+	username := c.BasicUser
+	passwd := c.BasicPass
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", domain, nil)
+	req.SetBasicAuth(username, passwd)
+	resp, err := client.Do(req)
+
 	if err != nil {
 		fmt.Println("Error with domain " + domain)
 		return
@@ -60,7 +66,14 @@ func urlFetchWorker(c *conf.Conf, id int, jobs <-chan string, results chan<- boo
 			url = strings.Replace(url, "http://", "", -1)
 		}
 
-		resp, err := http.Get(c.API + url)
+		username := c.BasicUser
+		passwd := c.BasicPass
+
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", c.API+url, nil)
+		req.SetBasicAuth(username, passwd)
+		resp, err := client.Do(req)
+
 		if err != nil {
 			fmt.Println("Error with url " + url)
 			results <- true

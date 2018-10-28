@@ -58,7 +58,7 @@ func TestConf_GetConf(t *testing.T) {
 				MaxPagesCrawledPerDomain: tt.fields.MaxPagesCrawledPerDomain,
 				SaveIntoFiles:            tt.fields.SaveIntoFiles,
 			}
-			got, err := c.GetConf(tt.args.fileName, tt.args.reader, tt.args.unmarshaller)
+			got, err := c.getConfFile(tt.args.fileName, tt.args.reader, tt.args.unmarshaller)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Conf.GetConf() error = %v, wantErr %v", err, tt.wantErr)
 				return
