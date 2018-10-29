@@ -2,8 +2,11 @@ package conf
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
+	"strings"
 
+	"golang.org/x/crypto/ssh/terminal"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -85,6 +88,11 @@ func getConfFromCLI(c *Conf) {
 
 	flag.Parse()
 
+	if *basicUser != "" && *basicPass == "" {
+		fmt.Println("User:", *basicUser)
+		basicPass = credentials()
+	}
+
 	var mydomains []string
 
 	c.API = *apiURL
@@ -101,4 +109,13 @@ func getConfFromCLI(c *Conf) {
 		mydomains[index] = myDomainsFromParam[index]
 	}
 	c.Domains = mydomains
+}
+
+func credentials() *string {
+	fmt.Print("Enter Password: ")
+	bytePassword, _ := terminal.ReadPassword(0)
+	fmt.Println(``)
+	password := string(bytePassword)
+	password = strings.TrimSpace(password)
+	return &password
 }
