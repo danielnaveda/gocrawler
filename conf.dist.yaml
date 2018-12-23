@@ -11,3 +11,6 @@ max_pages_crawled_per_domain: -1
 
 save_into_files: true
 
+save_into_elasticsearch: false
+
+elasticsearch_url: "http://127.0.0.1:9200"
