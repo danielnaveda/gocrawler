@@ -1,6 +1,7 @@
 package worker
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
@@ -10,10 +11,29 @@ import (
 
 	"github.com/danielnaveda/gocrawler/conf"
 	"github.com/danielnaveda/gocrawler/sitemap"
+	"github.com/olivere/elastic"
 )
 
+// Webpage is a simple representation of a webpage
+type Webpage struct {
+	URL     string `json:"url"`
+	Webpage string `json:"webpage"`
+}
+
 // CrawlDomain reads the sitemap.xml of a site and fetches all its urls
-func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
+func CrawlDomain(c *conf.Conf, esclient *elastic.Client, domain string, wg *sync.WaitGroup) {
+
+	webpage := Webpage{URL: `https://www.somewebsite1.com`, Webpage: `<html><head></head><body></body></html>`}
+	_, err := esclient.Index().
+		Index("webpages").
+		Type("doc").
+		BodyJson(webpage).
+		Refresh("wait_for").
+		Do(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
 	defer wg.Done()
 	username := c.BasicUser
 	passwd := c.BasicPass
@@ -37,7 +57,7 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 	results := make(chan bool, 20000)
 
 	for w := 1; w <= c.WorkersPerDomain; w++ {
-		go urlFetchWorker(c, w, urls, results)
+		go urlFetchWorker(c, esclient, w, urls, results)
 	}
 
 	counter := 0
@@ -57,7 +77,7 @@ func CrawlDomain(c *conf.Conf, domain string, wg *sync.WaitGroup) {
 	}
 }
 
-func urlFetchWorker(c *conf.Conf, id int, jobs <-chan string, results chan<- bool) {
+func urlFetchWorker(c *conf.Conf, esclient *elastic.Client, id int, jobs <-chan string, results chan<- bool) {
 	for url := range jobs {
 		fmt.Println("Fetching", url)
 
@@ -84,6 +104,21 @@ func urlFetchWorker(c *conf.Conf, id int, jobs <-chan string, results chan<- boo
 
 		if c.SaveIntoFiles == true {
 			saveIntoFile(url, body)
+		}
+
+		if c.SaveIntoElasticsearch == true {
+			// TODO: save into elasticsearch
+			// webpage := Webpage{URL: `https://www.somewebsite.com`, Webpage: `<html><head></head><body></body></html>`}
+			webpage := Webpage{URL: url, Webpage: string(body[:])}
+			_, err = esclient.Index().
+				Index("webpages").
+				Type("doc").
+				BodyJson(webpage).
+				Refresh("wait_for").
+				Do(context.Background())
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		results <- true

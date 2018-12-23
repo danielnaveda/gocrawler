@@ -65,7 +65,7 @@ func getConfFromDefault(c *Conf) {
 	c.SaveIntoFiles = false
 	c.BasicUser = ``
 	c.BasicPass = ``
-	c.ConfigFilePath = ``
+	c.ConfigFilePath = `conf.yaml`
 	c.SaveIntoElasticsearch = false
 	c.ElasticsearchURL = `http://127.0.0.1:9200`
 }
