@@ -43,17 +43,6 @@ func Run() {
 				panic(err)
 			}
 		}
-
-		// webpage := worker.Webpage{URL: `https://www.somewebsite.com`, Webpage: `<html><head></head><body></body></html>`}
-		// _, err = esclient.Index().
-		// 	Index("webpages").
-		// 	Type("doc").
-		// 	BodyJson(webpage).
-		// 	Refresh("wait_for").
-		// 	Do(context.Background())
-		// if err != nil {
-		// 	panic(err)
-		// }
 	}
 
 	if err != nil {
