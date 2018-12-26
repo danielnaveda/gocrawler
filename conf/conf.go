@@ -28,6 +28,8 @@ type Conf struct {
 	WorkersPerDomain         int      `yaml:"workers_per_domain"`
 	MaxPagesCrawledPerDomain int      `yaml:"max_pages_crawled_per_domain"`
 	SaveIntoFiles            bool     `yaml:"save_into_files"`
+	SaveIntoElasticsearch    bool     `yaml:"save_into_elasticsearch"`
+	ElasticsearchURL         string   `yaml:"elasticsearch_url"`
 	BasicUser                string
 	BasicPass                string
 	ConfigFilePath           string
@@ -63,7 +65,9 @@ func getConfFromDefault(c *Conf) {
 	c.SaveIntoFiles = false
 	c.BasicUser = ``
 	c.BasicPass = ``
-	c.ConfigFilePath = ``
+	c.ConfigFilePath = `conf.yaml`
+	c.SaveIntoElasticsearch = false
+	c.ElasticsearchURL = `http://127.0.0.1:9200`
 }
 
 func getConfFromFile(c *Conf) {
@@ -82,6 +86,9 @@ func getConfFromCLI(c *Conf) {
 	workersPerDomain := flag.Int("nworkers", c.WorkersPerDomain, "number of worker per domains")
 	crawlersPerDomain := flag.Int("ncrawlers", c.MaxPagesCrawledPerDomain, "number of crawlers per domains")
 	saveFiles := flag.Bool("savefile", c.SaveIntoFiles, "type false if you do not want to save the files in a folder")
+
+	saveIntoElasticsearch := flag.Bool("saveintoes", c.SaveIntoElasticsearch, "")
+	elasticsearchURL := flag.String("esurl", c.ElasticsearchURL, "")
 
 	basicUser := flag.String("basicuser", c.BasicUser, "basic authentication username")
 	basicPass := flag.String("basicpass", c.BasicPass, "basic authentication password")
@@ -102,6 +109,8 @@ func getConfFromCLI(c *Conf) {
 	c.BasicUser = *basicUser
 	c.BasicPass = *basicPass
 	c.ConfigFilePath = *confFilePath
+	c.SaveIntoElasticsearch = *saveIntoElasticsearch
+	c.ElasticsearchURL = *elasticsearchURL
 
 	mydomains = make([]string, len(myDomainsFromParam))
 
