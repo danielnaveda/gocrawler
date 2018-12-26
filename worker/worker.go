@@ -16,24 +16,12 @@ import (
 
 // Webpage is a simple representation of a webpage
 type Webpage struct {
-	URL     string `json:"url"`
-	Webpage string `json:"webpage"`
+	URL        string `json:"url"`
+	StatusCode int    `json:"statuscode"`
 }
 
 // CrawlDomain reads the sitemap.xml of a site and fetches all its urls
 func CrawlDomain(c *conf.Conf, esclient *elastic.Client, domain string, wg *sync.WaitGroup) {
-
-	webpage := Webpage{URL: `https://www.somewebsite1.com`, Webpage: `<html><head></head><body></body></html>`}
-	_, err := esclient.Index().
-		Index("webpages").
-		Type("doc").
-		BodyJson(webpage).
-		Refresh("wait_for").
-		Do(context.Background())
-	if err != nil {
-		panic(err)
-	}
-
 	defer wg.Done()
 	username := c.BasicUser
 	passwd := c.BasicPass
@@ -86,12 +74,12 @@ func urlFetchWorker(c *conf.Conf, esclient *elastic.Client, id int, jobs <-chan 
 			url = strings.Replace(url, "http://", "", -1)
 		}
 
-		username := c.BasicUser
-		passwd := c.BasicPass
+		// username := c.BasicUser
+		// passwd := c.BasicPass
 
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", c.API+url, nil)
-		req.SetBasicAuth(username, passwd)
+		// req.SetBasicAuth(username, passwd)
 		resp, err := client.Do(req)
 
 		if err != nil {
@@ -107,9 +95,7 @@ func urlFetchWorker(c *conf.Conf, esclient *elastic.Client, id int, jobs <-chan 
 		}
 
 		if c.SaveIntoElasticsearch == true {
-			// TODO: save into elasticsearch
-			// webpage := Webpage{URL: `https://www.somewebsite.com`, Webpage: `<html><head></head><body></body></html>`}
-			webpage := Webpage{URL: url, Webpage: string(body[:])}
+			webpage := Webpage{URL: url, StatusCode: resp.StatusCode}
 			_, err = esclient.Index().
 				Index("webpages").
 				Type("doc").
